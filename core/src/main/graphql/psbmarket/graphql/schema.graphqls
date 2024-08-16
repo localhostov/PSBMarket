@@ -1,0 +1,2557 @@
+directive @defer(label: String, if: Boolean! = true) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""SEO текстовки, маркетинговые акции и тд"""
+type AdditionalText {
+  """Название текста"""
+  key: String!
+
+  """Текст"""
+  value: String
+}
+
+"""Маркировка рекламы"""
+type AdMarker {
+  """Ad marker identifier."""
+  marker: String!
+  orgInn: String
+  orgName: String!
+}
+
+type AuthDetails {
+  accessToken: String!
+  customer: Customer!
+  refreshToken: String!
+}
+
+"""Базовый интерфейс для баннеров"""
+interface Banner {
+  """Маркировка рекламы для баннера"""
+  adMarker: AdMarker
+
+  """Подзаголовок или описание"""
+  description: String
+
+  """ID баннера"""
+  id: Int!
+
+  """Изображение баннера"""
+  image: PhotoLink!
+
+  """Ссылка, которая открывается при нажатии на баннер"""
+  link: String
+
+  """Заголовок"""
+  title: String!
+}
+
+"""Кнопка баннера"""
+type BannerButton {
+  """1 цвет кнопки"""
+  color1: String!
+
+  """2 цвет кнопки"""
+  color2: String!
+
+  """Текст кнопки"""
+  text: String!
+
+  """Цвет текста в кнопке"""
+  textColor: String!
+}
+
+"""Не используется"""
+type BottomIconTextBadge implements ProductBadge {
+  id: Int!
+  text: String!
+  textColor: String!
+  backgroundColor: String!
+  iconLink: String!
+  description: String
+  link: String
+}
+
+"""Обычный бадж для продукта, текст в рамке внизу фотографии"""
+type BottomTextBadge implements ProductBadge {
+  id: Int!
+  text: String!
+  textColor: String!
+  backgroundColor: String!
+  description: String
+  link: String
+}
+
+"""Набор комбо-товаров"""
+type Bundle {
+  """Время, до которого действует предложение по комбо"""
+  dateCompleted: Timestamp
+
+  """ID набора"""
+  id: Int!
+
+  """
+  SKU товаров в комбо-предложении. По трем товарам с пятью SKU на каждом придет список из 15 элементов, при этом скидка будет считаться с учетом наличия именно трех товаров в комбо
+  """
+  items: [BundleItem!]!
+}
+
+"""СКУ в комбо-предложении"""
+type BundleItem {
+  """Размер скидки на SKU товара с примененным комбо-предложением"""
+  discountAmount: Int!
+
+  """
+  ID товара в списке комбо-предложения (не id и не skuId товара, для клиентов смысла не несет)
+  """
+  id: Int!
+
+  """Цена покупки SKU с учетом комбо-предложения"""
+  purchasePrice: Int!
+
+  """SKU, участвующий в комбо-предложении"""
+  sku: Sku!
+}
+
+type CalculatedCartItem {
+  """Количество"""
+  amount: Int!
+
+  """Примененные скидки"""
+  appliedDiscounts: [Discount]!
+
+  """Полную стоимость одного sku"""
+  itemFullPrice: Int!
+
+  """Цену одного sku после скидки"""
+  itemSellPrice: Int!
+  sku: Sku!
+
+  """Общая стоимость до скидок = itemFullPrice * amount"""
+  totalFullPrice: Int!
+
+  """Общая цена со всеми скидками = itemSellPrice * amount"""
+  totalSellPrice: Int!
+}
+
+type CartCalculation {
+  """Цена корзины без скидок"""
+  cartFullPrice: Int!
+
+  """Цена корзины со скидками"""
+  cartTotalPrice: Int!
+
+  """Невыбранные sku в корзине"""
+  deselectedCartItems: [CalculatedCartItem!]!
+
+  """Сумма скидки на всю корзину"""
+  discountAmount: Int!
+
+  """Описание всех примененных скидок"""
+  discountDescriptions: [DiscountDescription]!
+  orderDiscountDto: OrderDiscount!
+
+  """Выбранные sku в корзине"""
+  selectedCartItems: [CalculatedCartItem!]!
+}
+
+type CartCheckoutInformation {
+  cartCalculations: CartCalculation!
+  courierDeliveryDates: [DeliveryOffer]
+  courierDeliveryInfo: CourierDeliveryInfo!
+  deliveryOffers: [DeliveryOfferInfo]!
+  deliveryPoints: [DeliveryPoint!]!
+  deliveryProviders: [DeliveryProviderInfo]!
+  postamats: [Postamat]
+  pvzDeliveryInfo: PvzDeliveryInfo!
+}
+
+input CartCheckoutInformationInput {
+  address: String
+  cityId: Int
+  deselectedCartItems: [CartCheckoutItem]!
+  selectedCartItems: [CartCheckoutItem]!
+  selectedDelivery: SelectedDelivery
+}
+
+input CartCheckoutItem {
+  amount: Int!
+  skuId: Int!
+}
+
+type CartItem {
+  amount: Int!
+  sku: Sku!
+}
+
+input CartItemInput {
+  amount: Int!
+  skuId: Int!
+}
+
+"""
+Базовый интерфейс для карточек товара, могут быть SkuGroupCard и ProductCard
+"""
+interface CatalogCard {
+  """Catalog card entity identifier."""
+  id: Int!
+
+  """ID продукта"""
+  productId: Int!
+
+  """Заголовок"""
+  title: String!
+
+  """Количество заказов"""
+  ordersQuantity: Int!
+
+  """Количество отзывов"""
+  feedbackQuantity: Int!
+
+  """Рейтинг"""
+  rating: Float!
+
+  """Массив фотографий"""
+  photos: [Photo!]!
+
+  """Информация о временной скидке"""
+  offer: ProductOffer
+
+  """Массив бейджей"""
+  badges: [ProductBadge!]!
+
+  """
+  Цена для отображения в карточке товара с учетом скидки (минимальная актуальная цена из всех SKU)
+  """
+  minSellPrice: Int!
+
+  """
+  Цена для отображения в карточке товара до скидки (минимальная цена до скидки из всех SKU)
+  """
+  minFullPrice: Int!
+
+  """Добавлено ли в избранное"""
+  favorite: Boolean!
+
+  """Является ли 18+"""
+  adult: Boolean!
+
+  """Информация о проценте скидки(если есть)"""
+  discountPercent: String
+
+  """Информация о магазине, который продает этот товар"""
+  shop: Shop
+
+  """Информация о наличии"""
+  inStock: Boolean!
+}
+
+"""Catalog card suggestions block."""
+type CatalogCardSuggestionsBlock {
+  """List of product suggestions."""
+  cards: [CatalogCard!]
+
+  """Order of this block."""
+  order: Int!
+}
+
+"""Категория"""
+type Category {
+  """Category identifier."""
+  id: Int!
+  adult: Boolean!
+  children: [Category!]!
+  icon: String
+  image: PhotoLink
+  parent: Category
+  parentList: [Category!]!
+  seo: SeoCategoryFields!
+  title: String!
+}
+
+"""Category suggestions block."""
+type CategorySuggestionsBlock {
+  """List of category suggestions."""
+  categories: [Category!]
+
+  """Order of this block."""
+  order: Int!
+}
+
+"""Тип характеристики"""
+enum CharacteristicType {
+  """Текстовое значение"""
+  TEXT
+
+  """RGB цвет"""
+  COLOR
+
+  """Фото"""
+  IMAGE
+}
+
+"""Значение по характеристике товара"""
+type CharacteristicValue {
+  """ID значения"""
+  id: Int!
+
+  """Характеристика"""
+  characteristic: ProductCharacteristic!
+
+  """Заголовок значения характеристики"""
+  title: String!
+
+  """Для хар-ки цвет - RGB значение"""
+  value: String!
+
+  """Фото значения характеристики"""
+  photo: Photo
+}
+
+"""Город"""
+type City {
+  """Массив дат для доставки (с информацией по таймслотам доставки)"""
+  deliveryDates: [DeliveryDate!]!
+
+  """Список ПВЗ"""
+  deliveryPoints: [DeliveryPoint!]!
+
+  """
+  Стоимость курьерской доставки (deprecated, использовать DeliveryDate -> options -> price)
+  """
+  deliveryPrice: Int! @deprecated
+
+  """ID города"""
+  id: Int!
+
+  """Минимальная стоимость заказа для бесплатной доставки курьером"""
+  minFreeDeliveryPriceCourier: Int!
+
+  """Минимальная стоимость заказа для доставки до ПВЗ"""
+  minFreeDeliveryPriceDp: Int!
+
+  """Название города"""
+  name: String!
+}
+
+"""Контакты пользователя"""
+type Contacts {
+  """E-mail"""
+  email: String
+
+  """Имя"""
+  firstName: String
+
+  """Фамилия"""
+  lastName: String
+
+  """Отчество"""
+  patronymic: String
+
+  """Телефон"""
+  phone: String
+
+  """Пол"""
+  sex: String
+}
+
+input ContactsInput {
+  birthDate: Timestamp
+  email: String!
+  firstName: String!
+  isMailAccept: Boolean
+  lastName: String!
+  patronymic: String
+  phone: String!
+  sex: String
+}
+
+"""Курьерская доставка"""
+type CourierDelivery implements Delivery {
+  address: String!
+  city: City!
+  date: Timestamp!
+  originalDeliveryPrice: Int
+  period: String!
+  price: Int!
+  todayDelivery: Boolean!
+}
+
+type CourierDeliveryInfo {
+  """Текущая стоимость доставки курьером с учетом размера корзины"""
+  currentDeliveryPrice: Int
+
+  """Минимальная сумма корзины для бесплатной доставки курьером"""
+  freeDeliveryMinAmount: Int!
+
+  """Стоимость доставки курьером для выбранного города"""
+  minDeliveryPrice: Int
+
+  """Стоимость всего заказа с учетом текущей стоимости доставки курьером"""
+  totalOrderPrice: Int
+}
+
+input CreateOrderInput {
+  comment: String
+  contacts: ContactsInput!
+  delivery: DeliveryInput!
+  orderItems: [OrderItemInput!]!
+  promoCode: String
+}
+
+"""Пользователь"""
+type Customer {
+  """ID пользователя"""
+  id: Int!
+  phoneVerified: Boolean!
+  contacts: Contacts
+}
+
+"""День недели"""
+enum DayOfWeek {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
+}
+
+"""Базовый интерфейс для объекта доставки"""
+interface Delivery {
+  originalDeliveryPrice: Int
+  price: Int!
+}
+
+"""Дата доставки"""
+type DeliveryDate {
+  """Дата доставки"""
+  date: Timestamp!
+
+  """Массив таймслотов доставки"""
+  options: [DeliveryOption!]!
+
+  """Массив таймслотов доставки, deprecated, использовать options"""
+  periods: [String!]! @deprecated
+}
+
+type DeliveryInfo {
+  freeDeliveryMinPrice: Int!
+}
+
+input DeliveryInput {
+  address: String
+  city: String
+  cityId: Int
+  date: Timestamp
+  deliveryOptionId: Int
+  deliveryPointId: Int
+  deliveryPointKey: String
+  isTodayDelivery: Boolean
+  period: String
+  price: Int!
+  serviceCode: String
+  serviceTariffId: String
+  type: DeliveryType!
+}
+
+"""Расчет дат и стоимости курьерской доставки"""
+type DeliveryOffer {
+  date: Timestamp!
+  options: [DeliveryOption!]!
+}
+
+"""Предложения провайдеров доставки"""
+type DeliveryOfferInfo {
+  """Провайдер услуг доставки"""
+  deliveryProvider: DeliveryProvider!
+
+  """Код службы доставки"""
+  deliveryServiceCode: String!
+
+  """Тип доставки"""
+  deliveryType: MetashipDeliveryType!
+
+  """Максимальный срок доставки в днях"""
+  maxDays: Int
+
+  """Минимальный срок доставки в днях"""
+  minDays: Int
+
+  """Цена доставки"""
+  price: Int!
+
+  """Идентификатор тарифа доставки"""
+  tariffId: String!
+
+  """Название тарифа доставки"""
+  tariffName: String!
+}
+
+"""Таймслот доставки"""
+type DeliveryOption {
+  """Время начала таймслота"""
+  from: Time!
+
+  """ID таймслота"""
+  id: Int!
+
+  """Стоимость доставки в этот таймслот"""
+  price: Int!
+
+  """Время окончания таймслота"""
+  to: Time!
+}
+
+"""Информация о пункте выдачи заказов"""
+type DeliveryPoint {
+  """Принимает ли возвраты"""
+  acceptReturns: Boolean!
+
+  """Адрес ПВЗ"""
+  address: String!
+
+  """Ближайшая дата доставки"""
+  deliveryDate: Timestamp
+
+  """Цена доставки"""
+  deliveryPrice: Int
+
+  """Есть ли примерочная"""
+  hasDressingRoom: Boolean!
+
+  """Ссылка на иконку"""
+  iconUrl: String
+
+  """ID ПВЗ"""
+  id: Int!
+
+  """Широта"""
+  latitude: Float!
+
+  """Долгота"""
+  longitude: Float!
+
+  """Название ПВЗ"""
+  name: String
+
+  """Номер телефона"""
+  phone: String
+
+  """Расписание работы ПВЗ"""
+  schedule: Schedule!
+
+  """Срок хранения заказа"""
+  shelfLife: Int
+
+  """Время начала работы ПВЗ"""
+  timeFrom: String! @deprecated(reason: "Использовать schedule")
+
+  """Время окончания работы ПВЗ"""
+  timeTo: String! @deprecated(reason: "Использовать schedule")
+
+  """Тип ПВЗ"""
+  type: DeliveryPointType!
+}
+
+enum DeliveryPointType {
+  DELIVERY_POINT
+  RUSSIAN_POST
+}
+
+"""Провайдер услуг доставки"""
+enum DeliveryProvider {
+  MARKETPLACE
+  METASHIP
+  POST
+}
+
+"""Провайдеры доставки"""
+type DeliveryProviderInfo {
+  """Провайдер услуг доставки"""
+  deliveryProvider: DeliveryProvider!
+
+  """Код службы доставки"""
+  deliveryServiceCode: String!
+
+  """Тип доставки"""
+  deliveryType: MetashipDeliveryType!
+
+  """Минимальный срок доставки в днях"""
+  minDays: Int
+
+  """Минимальная цена доставки"""
+  minPrice: Int!
+}
+
+enum DeliveryType {
+  COURIER
+  DELIVERY_POINT
+  METASHIP
+  POSTAMAT
+  RUSSIAN_POST
+}
+
+type Discount {
+  """Тип скидки"""
+  appliedDiscount: DiscountType!
+
+  """Размер скидки"""
+  discountAmount: Int!
+
+  """Текст скидки"""
+  discountText: String!
+}
+
+type DiscountDescription {
+  """Размер скидки"""
+  amount: Int!
+
+  """Описание скидки"""
+  description: String!
+}
+
+enum DiscountType {
+  BUNDLE
+  VOLUME
+}
+
+"""Тип запрашиваемой главной страницы"""
+enum DisplayType {
+  """Используется только на десктопном вебе"""
+  DESKTOP
+
+  """Используется на iOS, Android и мобильном вебе"""
+  MOBILE
+}
+
+"""Доставка до ПВЗ"""
+type DpDelivery implements Delivery {
+  deliveryPoint: DeliveryPoint!
+  originalDeliveryPrice: Int
+  price: Int!
+}
+
+type Dshop {
+  description: String
+  id: Int!
+  legal: String
+  title: String!
+  url: String
+}
+
+type DshopBanner implements Banner {
+  """Маркировка рекламы для баннера"""
+  adMarker: AdMarker
+  buttonText: String
+  description: String
+  id: Int!
+  image: PhotoLink!
+  link: String
+
+  """Параметры"""
+  params: String
+
+  """
+  Свойство в ссылках на фронте, оно отвечает в каком окне открывать ссылку (текущем, новом)
+  """
+  target: String
+  title: String!
+
+  """Тип запрашиваемой главной страницы"""
+  type: DisplayType
+}
+
+type DshopMain {
+  banners: [DshopBanner!]!
+  categories: [Category!]!
+  cities: [City!]!
+  dshopTexts: DshopTexts
+  offers: [DshopOffer!]!
+  promoCategories: [PromoCategory]
+  shop: Dshop!
+}
+
+type DshopOffer {
+  description: String
+  id: Int!
+  productsPage(page: Int! = 0, size: Int! = 10, sort: ProductSort): ProductsPage!
+  title: String!
+}
+
+"""Тексты CMS"""
+type DshopTexts {
+  """О компании"""
+  aboutCompany: String
+
+  """Другие тексты"""
+  additionalTexts: [AdditionalText]
+
+  """Контакты"""
+  contacts: String
+
+  """Часто задаваемые вопросы"""
+  faq: String
+
+  """Согласие на обработку персональных данных"""
+  privacy: String
+
+  """Пользовательское соглашение"""
+  terms: String
+}
+
+enum ErrorDetail {
+  """
+  The deadline expired before the operation could complete.
+
+  For operations that change the state of the system, this error
+  may be returned even if the operation has completed successfully.
+  For example, a successful response from a server could have been
+  delayed long enough for the deadline to expire.
+
+  HTTP Mapping: 504 Gateway Timeout
+  Error Type: UNAVAILABLE
+  """
+  DEADLINE_EXCEEDED
+
+  """
+  The server detected that the client is exhibiting a behavior that
+  might be generating excessive load.
+
+  HTTP Mapping: 429 Too Many Requests or 420 Enhance Your Calm
+  Error Type: UNAVAILABLE
+  """
+  ENHANCE_YOUR_CALM
+
+  """
+  The requested field is not found in the schema.
+
+  This differs from `NOT_FOUND` in that `NOT_FOUND` should be used when a
+  query is valid, but is unable to return a result (if, for example, a
+  specific video id doesn't exist). `FIELD_NOT_FOUND` is intended to be
+  returned by the server to signify that the requested field is not known to exist.
+  This may be returned in lieu of failing the entire query.
+  See also `PERMISSION_DENIED` for cases where the
+  requested field is invalid only for the given user or class of users.
+
+  HTTP Mapping: 404 Not Found
+  Error Type: BAD_REQUEST
+  """
+  FIELD_NOT_FOUND
+
+  """
+  The client specified an invalid argument.
+
+  Note that this differs from `FAILED_PRECONDITION`.
+  `INVALID_ARGUMENT` indicates arguments that are problematic
+  regardless of the state of the system (e.g., a malformed file name).
+
+  HTTP Mapping: 400 Bad Request
+  Error Type: BAD_REQUEST
+  """
+  INVALID_ARGUMENT
+
+  """
+  The provided cursor is not valid.
+
+  The most common usage for this error is when a client is paginating
+  through a list that uses stateful cursors. In that case, the provided
+  cursor may be expired.
+
+  HTTP Mapping: 404 Not Found
+  Error Type: NOT_FOUND
+  """
+  INVALID_CURSOR
+
+  """
+  Unable to perform operation because a required resource is missing.
+
+  Example: Client is attempting to refresh a list, but the specified
+  list is expired. This requires an action by the client to get a new list.
+
+  If the user is simply trying GET a resource that is not found,
+  use the NOT_FOUND error type. FAILED_PRECONDITION.MISSING_RESOURCE
+  is to be used particularly when the user is performing an operation
+  that requires a particular resource to exist.
+
+  HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+  Error Type: FAILED_PRECONDITION
+  """
+  MISSING_RESOURCE
+
+  """
+  Service Error.
+
+  There is a problem with an upstream service.
+
+  This may be returned if a gateway receives an unknown error from a service
+  or if a service is unreachable.
+  If a request times out which waiting on a response from a service,
+  `DEADLINE_EXCEEDED` may be returned instead.
+  If a service returns a more specific error Type, the specific error Type may
+  be returned instead.
+
+  HTTP Mapping: 502 Bad Gateway
+  Error Type: UNAVAILABLE
+  """
+  SERVICE_ERROR
+
+  """
+  Request failed due to network errors.
+
+  HTTP Mapping: 503 Unavailable
+  Error Type: UNAVAILABLE
+  """
+  TCP_FAILURE
+
+  """
+  Request throttled based on server concurrency limits.
+
+  HTTP Mapping: 503 Unavailable
+  Error Type: UNAVAILABLE
+  """
+  THROTTLED_CONCURRENCY
+
+  """
+  Request throttled based on server CPU limits
+
+  HTTP Mapping: 503 Unavailable.
+  Error Type: UNAVAILABLE
+  """
+  THROTTLED_CPU
+
+  """
+  The operation is not implemented or is not currently supported/enabled.
+
+  HTTP Mapping: 501 Not Implemented
+  Error Type: BAD_REQUEST
+  """
+  UNIMPLEMENTED
+
+  """
+  Unknown error.
+
+  This error should only be returned when no other error detail applies.
+  If a client sees an unknown errorDetail, it will be interpreted as UNKNOWN.
+
+  HTTP Mapping: 500 Internal Server Error
+  """
+  UNKNOWN
+}
+
+enum ErrorType {
+  """
+  Bad Request.
+
+  There is a problem with the request.
+  Retrying the same request is not likely to succeed.
+  An example would be a query or argument that cannot be deserialized.
+
+  HTTP Mapping: 400 Bad Request
+  """
+  BAD_REQUEST
+
+  """
+  The operation was rejected because the system is not in a state
+  required for the operation's execution.  For example, the directory
+  to be deleted is non-empty, an rmdir operation is applied to
+  a non-directory, etc.
+
+  Service implementers can use the following guidelines to decide
+  between `FAILED_PRECONDITION` and `UNAVAILABLE`:
+
+  - Use `UNAVAILABLE` if the client can retry just the failing call.
+  - Use `FAILED_PRECONDITION` if the client should not retry until
+  the system state has been explicitly fixed.  E.g., if an "rmdir"
+  fails because the directory is non-empty, `FAILED_PRECONDITION`
+  should be returned since the client should not retry unless
+  the files are deleted from the directory.
+
+  HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+  """
+  FAILED_PRECONDITION
+
+  """
+  Internal error.
+
+  An unexpected internal error was encountered. This means that some
+  invariants expected by the underlying system have been broken.
+  This error code is reserved for serious errors.
+
+  HTTP Mapping: 500 Internal Server Error
+  """
+  INTERNAL
+
+  """
+  The requested entity was not found.
+
+  This could apply to a resource that has never existed (e.g. bad resource id),
+  or a resource that no longer exists (e.g. cache expired.)
+
+  Note to server developers: if a request is denied for an entire class
+  of users, such as gradual feature rollout or undocumented allowlist,
+  `NOT_FOUND` may be used. If a request is denied for some users within
+  a class of users, such as user-based access control, `PERMISSION_DENIED`
+  must be used.
+
+  HTTP Mapping: 404 Not Found
+  """
+  NOT_FOUND
+
+  """
+  The caller does not have permission to execute the specified
+  operation.
+
+  `PERMISSION_DENIED` must not be used for rejections
+  caused by exhausting some resource or quota.
+  `PERMISSION_DENIED` must not be used if the caller
+  cannot be identified (use `UNAUTHENTICATED`
+  instead for those errors).
+
+  This error Type does not imply the
+  request is valid or the requested entity exists or satisfies
+  other pre-conditions.
+
+  HTTP Mapping: 403 Forbidden
+  """
+  PERMISSION_DENIED
+
+  """
+  The request does not have valid authentication credentials.
+
+  This is intended to be returned only for routes that require
+  authentication.
+
+  HTTP Mapping: 401 Unauthorized
+  """
+  UNAUTHENTICATED
+
+  """
+  Currently Unavailable.
+
+  The service is currently unavailable.  This is most likely a
+  transient condition, which can be corrected by retrying with
+  a backoff.
+
+  HTTP Mapping: 503 Unavailable
+  """
+  UNAVAILABLE
+
+  """
+  Unknown error.
+
+  For example, this error may be returned when
+  an error code received from another address space belongs to
+  an error space that is not known in this address space.  Also
+  errors raised by APIs that do not return enough error information
+  may be converted to this error.
+
+  If a client sees an unknown errorType, it will be interpreted as UNKNOWN.
+  Unknown errors MUST NOT trigger any special behavior. These MAY be treated
+  by an implementation as being equivalent to INTERNAL.
+
+  When possible, a more specific error should be provided.
+
+  HTTP Mapping: 520 Unknown Error
+  """
+  UNKNOWN
+}
+
+"""Ожидаемые сроки доставки"""
+type ExpectedDelivery {
+  """Максимальное кол-во дней через сколько доставят"""
+  maxDays: Int
+
+  """Минимальное кол-во дней через сколько доставят"""
+  minDays: Int
+
+  """Стоимость доставки"""
+  price: Int!
+}
+
+input ExpectedDeliveryInput {
+  delivery: DeliveryInput!
+  orderItems: [OrderItemInput!]!
+  promoCode: String
+}
+
+"""Статусы продукта для отображения на клиентах"""
+type ExtendedOrderStatus {
+  backgroundColor: String!
+  textColor: String!
+  title: String!
+  value: String!
+}
+
+"""Product facet."""
+type Facet {
+  """Product filter."""
+  filter: Filter!
+
+  """Facet buckets."""
+  buckets: [FacetBucket!]
+
+  """Facet range."""
+  range: FacetRange
+}
+
+"""Facet bucket."""
+type FacetBucket {
+  """Filter value."""
+  filterValue: FilterValue!
+
+  """Total number of items with the bucket's filter value."""
+  total: Int!
+}
+
+"""Facet range."""
+type FacetRange {
+  """Minimal value."""
+  min: Float!
+
+  """Maximum value."""
+  max: Float!
+}
+
+input FavoritesFilter {
+  sortBy: FavoritesSorting = DATE_ADDED
+  order: SortingOrder = DESCENDING
+  page: Int = 0
+  offset: Int
+  size: Int = 24
+}
+
+enum FavoritesSorting {
+  PRICE
+  DISCOUNT
+  DATE_ADDED
+}
+
+"""Отзыв"""
+type Feedback {
+  """ID отзыва"""
+  id: Int!
+
+  """Дата создания отзыва"""
+  dateCreated: Timestamp!
+
+  """Дата публикации отзыва"""
+  datePublished: Timestamp
+
+  """ID ордер айтема на который был оставлен отзыв"""
+  orderItem: OrderItem
+
+  """Ску на который был оствлен отзыв"""
+  sku: Sku!
+
+  """Имя автора отзыва"""
+  customerName: String!
+
+  """Рейтинг"""
+  rating: Int!
+
+  """Анонимный ли отзыв"""
+  anonymous: Boolean!
+
+  """Плюсы"""
+  pros: String
+
+  """Минусы"""
+  cons: String
+
+  """Комментарий"""
+  content: String
+
+  """Фотографии отзыва"""
+  photos: [Photo!]
+
+  """Ответ на отзыв"""
+  reply(page: Int! = 0, size: Int! = 10): [FeedbackReply!]
+}
+
+input FeedbackCreate {
+  orderItemId: Int!
+  rating: Int!
+  content: String! = ""
+  pros: String! = ""
+  cons: String! = ""
+  anonymous: Boolean! = false
+  photos: [String!]
+}
+
+enum FeedbackFilterType {
+  PHOTOS
+}
+
+"""Ответ на отзыв"""
+type FeedbackReply {
+  """ID ответа на отзыв"""
+  id: Int!
+
+  """Содержание ответа"""
+  content: String
+
+  """Дата создания ответа на отзыв"""
+  dateCreated: Timestamp
+
+  """Фотографии ответа"""
+  photos: [Photo!]
+
+  """Шоп который ответил на отзыв"""
+  shop: Shop
+}
+
+enum FeedbackSortType {
+  RELEVANCE
+  DATE_DESC
+  RATING_ASC
+  RATING_DESC
+}
+
+type Filter {
+  """Product filter identifier."""
+  id: Int!
+  title: String!
+  description: String
+  type: FilterType!
+
+  """Non-null for RANGED_VALUE"""
+  measurementUnit: String
+}
+
+"""Product filter input."""
+input FilterInput {
+  """Filter type."""
+  filterType: FilterInputType!
+
+  """Filter identifier."""
+  id: ID!
+
+  """Range values. Must be provided if the filter type is set to RANGE."""
+  range: FilterRangeInput
+
+  """List values. Must be provided if the filter type is set to LIST."""
+  list: FilterListInput
+}
+
+"""Product filter type."""
+enum FilterInputType {
+  """Range type."""
+  RANGE
+
+  """List type."""
+  LIST
+}
+
+"""List filter input values."""
+input FilterListInput {
+  """Filter values."""
+  values: [ID!]!
+}
+
+"""
+Range filter input values. At least one of the boundaries must be not null.
+"""
+input FilterRangeInput {
+  """Minimum value."""
+  min: Float
+
+  """Maximum value."""
+  max: Float
+}
+
+enum FilterType {
+  RANGED_VALUE
+  SINGLE_CHOICE
+  SINGLE_CHOICE_TAG
+  MULTIPLE_CHOICE
+  MULTIPLE_CHOICE_TAG
+  RANGED_ENUM
+}
+
+type FilterValue {
+  """Product filter value identifier."""
+  id: Int!
+  name: String!
+
+  """Link to an image"""
+  image: String
+  description: String
+  filter: Filter!
+}
+
+"""Search suggestions query input."""
+input GetSuggestionsInput {
+  """Query text. Must be no longer than 256 characters."""
+  text: String!
+
+  """The number of popular suggestions to return."""
+  popularSuggestionsLimit: Int = 0
+
+  """The number of text suggestions to return."""
+  textSuggestionsLimit: Int = 0
+
+  """The number of catalog card suggestions to return."""
+  catalogCardSuggestionsLimit: Int = 0
+
+  """The number of category suggestions to return."""
+  categorySuggestionsLimit: Int = 0
+
+  """The number of shop suggestions to return."""
+  shopSuggestionsLimit: Int = 0
+}
+
+"""Search suggestions result."""
+type GetSuggestionsResult {
+  """Suggestions blocks."""
+  blocks: [SuggestionBlock]
+}
+
+"""Search result item."""
+type Item {
+  """Found SKU group."""
+  catalogCard: CatalogCard!
+
+  """ad promotion marker"""
+  adMarker: AdMarker
+
+  """bid id"""
+  bidId: Int
+}
+
+type LegalRecord {
+  """Заголовок: ИНН, ОГРН и т.д., может быть пустым"""
+  name: String
+
+  """Значение"""
+  value: String!
+}
+
+"""Looked earlier block."""
+type LookedEarlierBlock {
+  """Order of this block."""
+  order: Int!
+}
+
+"""Search query input."""
+input MakeSearchQueryInput {
+  """Query text. Must be no longer than 256 characters."""
+  text: String
+
+  """
+  Category identifier. If specified, the search will be performed in the appropriate category.
+  """
+  categoryId: ID
+
+  """Offer category identifier. Used to search by the specified offer."""
+  offerCategoryId: ID
+
+  """
+  Shop identifier. If specified, the search will be performed for the appropriate shop.
+  """
+  shopId: ID
+
+  """Show adult content?"""
+  showAdultContent: ShowAdultContent!
+
+  """Product filters."""
+  filters: [FilterInput!]!
+
+  """Sorting."""
+  sort: Sort!
+
+  """Pagination parameters."""
+  pagination: PaginationInput!
+
+  """The minimal level offset of categories to prioritize."""
+  fastCategoriesLevelOffset: Int = 0
+
+  """The number of fast categories to return."""
+  fastCategoriesLimit: Int = 0
+
+  """Get fast categories?"""
+  getFastCategories: Boolean
+
+  """Use query correction?"""
+  correctQuery: Boolean
+
+  """Token for pagination."""
+  token: String
+
+  """Use this flag for paid promotion items."""
+  getPromotionItems: Boolean
+
+  """Search query permanent link."""
+  link: String
+}
+
+"""Search result."""
+type MakeSearchResult {
+  """Result identifier."""
+  id: ID!
+
+  """Search query identifier."""
+  queryId: ID!
+
+  """Search query text."""
+  queryText: String
+
+  """Corrected search query text."""
+  correctedQueryText: String
+
+  """Result of search query text."""
+  resultQueryText: String
+
+  """Category in which the items were found."""
+  category: Category
+
+  """Offer category in which the items were found."""
+  offerCategory: Category
+
+  """
+  Category tree. Returned only if the pagination has a limit of 0, else empty.
+  """
+  categoryTree: [SearchResultCategoryTreeEntry!]!
+
+  """
+  Fast categories. Returned only if the pagination has a limit of 0, else empty.
+  """
+  fastCategories: [SearchResultCategoryTreeEntry!]!
+
+  """Reports whether category was predicted."""
+  categoryWasPredicted: Boolean!
+
+  """Reports whether category was full matched."""
+  categoryFullMatch: Boolean!
+
+  """Reports whether search result may have adult content."""
+  mayHaveAdultContent: Boolean!
+
+  """Found items."""
+  items: [Item!]
+
+  """
+  Product facets. Returned only if the pagination has a limit of 0, else empty.
+  """
+  facets: [Facet!]
+
+  """Total number of items found."""
+  total: Int!
+
+  """Total number of paid promotion items found."""
+  totalPromotionItems: Int!
+
+  """Token for pagination."""
+  token: String!
+
+  """Permanent link seo data."""
+  permanentLinkSeo: PermanentLinkSeo
+}
+
+type MetashipDelivery implements Delivery {
+  address: String!
+  deliveryPointKey: String!
+  originalDeliveryPrice: Int
+  price: Int!
+}
+
+"""Тип доставки"""
+enum MetashipDeliveryType {
+  COURIER
+  DELIVERY_POINT
+  GOODSRU
+  POSTAMAT
+  POST_OFFICE
+  RU_POST
+}
+
+type MotivationAction implements ProductAction {
+  """Картинка в png/jpg формате"""
+  image: PhotoLink!
+  location: ProductActionLocation!
+
+  """Текст для отображения"""
+  text: String!
+  type: ProductActionType!
+}
+
+type Mutation {
+  refreshToken(refreshToken: String!): AuthDetails!
+  requestRestorePassword(phone: String!): Boolean
+  resendCode(phone: String): Boolean
+  restorePassword(code: Int!, password: String!, phone: String!): AuthDetails!
+  setupPassword(code: Int!, password: String!, phone: String!): AuthDetails!
+
+  """changePassword(oldPassword: String!, newPassword: String!): Customer!"""
+  signIn(password: String!, username: String!): AuthDetails!
+  signUp(email: String, phone: String!): AuthDetails!
+  verifyPhone(code: Int!): Customer!
+  verifyRestoreCode(code: Int!, phone: String!): Boolean
+  addCartItems(cartItemInputs: [CartItemInput!]!): [CartItem!]!
+  setCartItems(cartItemInputs: [CartItemInput!]!): [CartItem!]!
+  addFavoriteProducts(productIds: [Int!]!): Boolean
+  addFavoriteSkuGroups(skuGroupIds: [Int!]!): Boolean
+  createOrder(orderInput: CreateOrderInput!): Order
+  createPsbOrder(orderInput: CreateOrderInput!): Order
+  mock(type: DeliveryType, type2: SortDirection): Boolean
+  removeFavoriteProducts(productIds: [Int!]!): Boolean
+  removeFavoriteSkuGroups(skuGroupIds: [Int!]!): Boolean
+  updateUser(contacts: ContactsInput!): Contacts
+  saveFeedback(input: FeedbackCreate): Feedback
+}
+
+"""Описание заказа"""
+type Order {
+  comment: String
+  contacts: Contacts!
+  dateCreated: Timestamp!
+  dateUpdated: Timestamp
+  delivery: Delivery!
+  id: Int!
+  issueCode: Int
+  orderItems: [OrderItem!]!
+  orderStatus: ExtendedOrderStatus!
+  paymentUrl: String
+  payments: [Payment!]!
+  price: Int!
+  status: OrderStatus!
+}
+
+type OrderBundle {
+  amount: Int!
+  bundle: Bundle!
+}
+
+type OrderDiscount {
+  bundles: [OrderBundle]!
+  volumeDiscounts: [VolumeDiscount]!
+}
+
+"""Позиция в заказе"""
+type OrderItem {
+  """Количество выбранного SKU в заказе"""
+  amount: Int!
+
+  """Дата покупки по позиции в заказе"""
+  dateBought: Timestamp!
+
+  """ID позиции заказа"""
+  id: Int!
+
+  """Фото SKU"""
+  image: Photo!
+
+  """Цена оплаты для одной штуки"""
+  paymentPrice: Int!
+
+  """Цена покупки для одной штуки (без учета промокодов)"""
+  purchasePrice: Int!
+
+  """Количество, сколько вернули"""
+  returnedAmount: Int!
+
+  """SKU позиции в заказе"""
+  sku: Sku!
+
+  """Статус по позиции в заказе"""
+  status: OrderItemStatus
+  feedback: Feedback
+}
+
+input OrderItemFilter {
+  orderBy: OrderItemOrderBy
+}
+
+input OrderItemInput {
+  amount: Int!
+  purchasePrice: Int!
+  skuId: Int!
+}
+
+enum OrderItemOrderBy {
+  DATE_NEW
+}
+
+"""Статус по позиции в заказе"""
+enum OrderItemStatus {
+  CANCELED
+  COMPLETED
+
+  """Статусы такие же как на кастомерах"""
+  CREATED
+  NOT_CREATED
+  PAID
+  PROCESSED
+  RECEIVED
+  RETURNED
+}
+
+"""Статус заказа"""
+enum OrderStatus {
+  ACTIVE
+  CANCELED
+  COMPLETED
+  CREATED
+  DELIVERED
+  IN_DELIVERY
+  NOTIFICATION
+
+  """нужно описание по каждому статусу, ипользуются на Дшопах"""
+  NOT_CREATED
+  PROCESSED
+  RECEIVED
+  RETURNED
+}
+
+type PaginationInfo {
+  offset: Int!
+  limit: Int!
+  totalCount: Int!
+}
+
+"""Pagination input parameters."""
+input PaginationInput {
+  """
+  Offset of the first result item. Must be greater than or equal to zero.
+  """
+  offset: Int!
+
+  """The maximum number of items in the result. Must be in [1..100]."""
+  limit: Int!
+}
+
+input PagingOptions {
+  size: Int!
+  page: Int!
+}
+
+"""Описание платежа для заказа"""
+type Payment {
+  id: Int!
+  status: String!
+  url: String
+}
+
+type PaymentOption {
+  """Признак активности"""
+  active: Boolean!
+
+  """Дополнительная информация"""
+  checkMarks: [String]
+
+  """Описание"""
+  description: String
+
+  """Ссылка на детальное описание"""
+  detailsLink: String
+
+  """Иконки"""
+  icons: PaymentOptionIcon
+
+  """Параметры"""
+  params: [PaymentOptionParam]
+
+  """Заголовок"""
+  title: String!
+
+  """Код"""
+  value: String!
+}
+
+type PaymentOptionIcon {
+  """Путь к иконке для кнопки"""
+  button: String
+
+  """Путь к маленькой иконке"""
+  small: String
+}
+
+type PaymentOptionParam {
+  """Параметр"""
+  key: String!
+
+  """Значение"""
+  value: String
+}
+
+"""SEO информация по ЧПУ-URL"""
+type PermanentLinkSeo {
+  """ID ЧПУ-URL"""
+  id: Int!
+
+  """SEO header"""
+  seoHeader: String
+
+  """SEP metaTag"""
+  seoMetaTag: String
+
+  """SEO title"""
+  seoTitle: String
+}
+
+"""Фото"""
+type Photo {
+  """Ключ фотографии"""
+  key: String!
+
+  """Ссылка на оригинал фотографии"""
+  original: PhotoLink!
+
+  """
+  Объект ссылок (HQ + LQ) на вариацию фото по переданному параметру размера
+  """
+  link(trans: Transformation!): PhotoLink!
+}
+
+"""Ссылки на фото"""
+type PhotoLink {
+  """В высоком качестве"""
+  high: String!
+
+  """В низком качестве"""
+  low: String!
+}
+
+"""Popular suggestions block."""
+type PopularSuggestionsBlock {
+  """List of popular suggestions."""
+  popularSuggestions: [String!]
+
+  """Order of this block."""
+  order: Int!
+}
+
+type Postamat {
+  """Адрес постамата"""
+  address: String!
+
+  """Дата доставки"""
+  deliveryDate: DeliveryOffer!
+
+  """Цена доставки"""
+  deliveryPrice: Int
+
+  """ID постамата"""
+  id: Int!
+
+  """Широта"""
+  latitude: Float!
+
+  """Долгота"""
+  longitude: Float!
+
+  """Расписание работы постамата"""
+  schedule: Schedule!
+
+  """Время начала работы постамата"""
+  timeFrom: String! @deprecated(reason: "Использовать schedule")
+
+  """Время окончания работы постамата"""
+  timeTo: String! @deprecated(reason: "Использовать schedule")
+
+  """Тип постамата"""
+  type: PostamatType!
+}
+
+enum PostamatType {
+  POSTAMAT
+  RUSSIAN_POST
+}
+
+type PriceAggregation {
+  min: Int!
+  max: Int!
+}
+
+input PricingOptions {
+  min: Int
+  max: Int
+}
+
+"""Описание продукта"""
+type Product {
+  """ID продукта"""
+  id: Int!
+
+  """Название продукта"""
+  title: String!
+
+  """Количество заказов"""
+  ordersQuantity: Int!
+
+  """Количество отзывов"""
+  feedbackQuantity: Int!
+
+  """Рейтинг товара"""
+  rating: Float!
+
+  """Массив всех фотографий товара"""
+  photos: [Photo!]!
+
+  """Массив бейджей товара"""
+  badges: [ProductBadge!]!
+
+  """Информация о временной скидке"""
+  offer: ProductOffer
+
+  """Минимальная цена для продукта"""
+  minSellPrice: Int!
+
+  """Зачеркнутая цена для продукта"""
+  minFullPrice: Int!
+
+  """Добавлен ли товар в избранное"""
+  favorite: Boolean!
+
+  """Является ли товаром 18+"""
+  adult: Boolean!
+
+  """Развернутое описание продукта"""
+  description: String!
+
+  """Краткое описание продукта"""
+  shortDescription: String
+
+  """Информация о категории продукта"""
+  category: Category
+
+  """Массив содержащий размерную сетку, инструкцию, состав, сертификацию"""
+  comments: [ProductComment!]!
+
+  """Массив SKU"""
+  skuList: [Sku!]!
+
+  """Свойства товара"""
+  attributes: [String!]!
+
+  """Видео с товаром"""
+  video: Video
+
+  """Фотографии 360"""
+  photo360: [Photo!]
+
+  """Флаг на наличие вертикальной фотографии"""
+  hasVerticalPhoto: Boolean!
+
+  """Массив характеристик продукта"""
+  characteristics: [ProductCharacteristic!]!
+
+  """Информация о магазине, который продает этот товар"""
+  shop: Shop
+
+  """Массив СКУ-групп продукта"""
+  skuGroups: [SkuGroupCard!]!
+
+  """Информация о наличии"""
+  inStock: Boolean!
+}
+
+"""Различного рода плашки на странице товара"""
+interface ProductAction {
+  """Место для отображения плашки"""
+  location: ProductActionLocation!
+
+  """Отображать только известные типы, в случае неизвестного игнорировать!"""
+  type: ProductActionType!
+}
+
+enum ProductActionLocation {
+  PRODUCT_BOTTOM_BAR
+}
+
+enum ProductActionType {
+  """Баннеры на странице товара (например 'Намекалово')"""
+  BANNER_ACTION
+
+  """Этот товар смотрят 285 человек"""
+  MOTIVATION
+
+  """Хочу скидку"""
+  WISH_SALE
+}
+
+"""Бейдж продукта"""
+interface ProductBadge {
+  """ID бейджа"""
+  id: Int!
+
+  """Текст на бейдже"""
+  text: String!
+
+  """Цвет текста на бейдже"""
+  textColor: String!
+
+  """Цвет фона бейджа"""
+  backgroundColor: String!
+}
+
+"""Баннер на странице товара"""
+type ProductBanner implements ProductAction {
+  """Фон баннера"""
+  backgroundColor: String!
+
+  """Кнопка баннера"""
+  button: BannerButton!
+
+  """Текста для диалогового окна"""
+  dialogTexts: [String]
+
+  """Ссылка на иконку"""
+  iconLink: String!
+  location: ProductActionLocation!
+  type: ProductActionType!
+}
+
+"""Карточка продукта"""
+type ProductCard implements CatalogCard {
+  """ID продукта"""
+  id: Int!
+
+  """ID продукта"""
+  productId: Int!
+
+  """Название товара"""
+  title: String!
+
+  """Количество заказов для всего товара (не по отдельной SKU группе)"""
+  ordersQuantity: Int!
+
+  """Количество отзывов для всего товара (не по отдельной SKU грппе)"""
+  feedbackQuantity: Int!
+
+  """Рейтинг товара (не отдельной SKU группы)"""
+  rating: Float!
+
+  """Фотографии товара (приходит только главная пока)"""
+  photos: [Photo!]!
+
+  """Плашка со скидкой с таймером"""
+  offer: ProductOffer
+
+  """Массив бейджей товара"""
+  badges: [ProductBadge!]!
+
+  """
+  Цена для отображения в карточке товара с учетом скидки (минимальная актуальная цена из всех SKU)
+  """
+  minSellPrice: Int!
+
+  """
+  Цена для отображения в карточке товара до скидки (минимальная цена до скидки из всех SKU)
+  """
+  minFullPrice: Int!
+
+  """Добавлен ли товар в избранное"""
+  favorite: Boolean!
+
+  """Является ли товаром 18+"""
+  adult: Boolean!
+
+  """Информация о проценте скидки(если есть)"""
+  discountPercent: String
+
+  """Информация о магазине, который продает этот товар"""
+  shop: Shop
+
+  """Информация о наличии"""
+  inStock: Boolean!
+}
+
+"""Значение характеристики продукта"""
+type ProductCharacteristic {
+  """ID характеристики"""
+  id: Int!
+
+  """Заголовок характеристики"""
+  title: String!
+
+  """Массив значений по характеристике"""
+  values: [CharacteristicValue!]!
+
+  """Тип отображения значения характеристики"""
+  type: CharacteristicType!
+}
+
+"""Размерная сетка, инструкция, состав, сертификация"""
+type ProductComment {
+  type: String!
+  value: String!
+}
+
+type ProductFavorites {
+  products: [ProductCard!]!
+  paginationInfo: PaginationInfo!
+}
+
+"""Информация о временной скидке"""
+type ProductOffer {
+  """Дата окончания временной скидки"""
+  due: Timestamp
+
+  """Иконка временной скидки"""
+  icon: String
+
+  """Иконка временной скидки в формате ссылки на png/jpg"""
+  image: PhotoLink
+
+  """Текст таймера"""
+  text: String
+
+  """Цвет текста"""
+  textColor: String
+
+  """Цвет фона"""
+  backgroundColor: String
+}
+
+"""Информация для отображения страницы товара"""
+type ProductPage {
+  """ID продукта"""
+  id: Int!
+
+  """Сам продукт"""
+  product: Product!
+
+  """Краткие переходы (Смотрите также)"""
+  related: [RelatedElement]
+
+  """Actions 'Этот товар смотрят 285 человек'"""
+  actions: [ProductAction!]
+  feedbacks(sort: FeedbackSortType! = RELEVANCE, filters: [FeedbackFilterType!] = [], page: Int! = 0, size: Int! = 10): [Feedback!]
+  reviewsPhotoAmount: Int
+}
+
+type ProductPaymentOption {
+  """Старый optionId"""
+  id: Int!
+
+  """Название"""
+  text: String!
+
+  """Тип плашки"""
+  type: ProductPaymentOptionType!
+
+  """Ежемесячный платеж или пояснения к Долями"""
+  paymentInfo: String
+
+  """Доступен ли данный способ оплаты"""
+  active: Boolean!
+}
+
+"""Исключили 'Лучшая цена', будет отдельная плашка под это"""
+enum ProductPaymentOptionType {
+  INSTALLMENT
+  DOLYAME
+}
+
+input ProductSort {
+  direction: SortDirection = ASC
+  param: ProductSortType = RELEVANCE
+}
+
+enum ProductSortType {
+  ORDERS
+  PRICE
+  RELEVANCE
+  REVIEWS
+}
+
+"""Список товаров"""
+type ProductsPage {
+  """Массив продуктов"""
+  content: [Product!]!
+
+  """Номер страницы пагинации"""
+  page: Int!
+
+  """Размер страницы пагинации"""
+  pageSize: Int!
+}
+
+enum ProductVat {
+  """Без НДС"""
+  NONE
+
+  """0%"""
+  VAT0
+
+  """10%"""
+  VAT10
+
+  """20%"""
+  VAT20
+
+  """10/110"""
+  VAT110
+
+  """20/120"""
+  VAT120
+}
+
+"""Промо-Категории"""
+type PromoCategory {
+  deepLink: String!
+  iconLink: String
+  id: Int!
+  subtitle: String
+  title: String!
+}
+
+input PromoCodeInput {
+  delivery: DeliveryInput!
+  orderItems: [OrderItemInput!]
+  promoCode: String!
+}
+
+type PromoCodeResponse {
+  discountAmount: Int
+  message: String
+  success: Boolean!
+}
+
+type PvzDeliveryInfo {
+  """Текущая стоимость доставки до ПВЗ с учетом размера корзины"""
+  currentDeliveryPrice: Int
+
+  """Минимальная сумма корзины, необходимая для бесплатной доставки в ПВЗ"""
+  freeDeliveryMinAmount: Int!
+
+  """
+  Минимальная стоимость доставки в ПВЗ, если null, то в городе нет платной доставки
+  """
+  minDeliveryPrice: Int
+
+  """Стоимость всего заказа с учетом текущей стоимости доставки"""
+  totalOrderPrice: Int
+}
+
+type Query {
+  dummyQuery: Boolean
+  cart: [CartItem!]!
+  skuGroupCard(id: Int!): SkuGroupCard
+  productCard(id: Int!): ProductCard
+  product(id: Int!): Product!
+
+  """Запрос на получение данных по странице товара"""
+  productPage(id: Int!): ProductPage!
+  skuGroupFavorites(filter: FavoritesFilter): [SkuGroupCard]!
+  productFavorites(filter: FavoritesFilter): ProductFavorites!
+  calcCourierDeliveryOffers(orderInput: CreateOrderInput!): [DeliveryOffer!]!
+  cartCheckoutInformation(cartCheckoutInfoInput: CartCheckoutInformationInput!): CartCheckoutInformation
+  category(categoryId: Int!): Category!
+  checkPromoCode(input: PromoCodeInput!): PromoCodeResponse!
+  deliveryInfo: DeliveryInfo!
+  dshopMain(type: DisplayType = DESKTOP): DshopMain!
+  dshopOffer(offerId: Int!): DshopOffer!
+  expectedDelivery(deliveryInput: ExpectedDeliveryInput!): ExpectedDelivery
+  order(orderId: Int!): Order!
+  orderItemsWithoutReview(filter: OrderItemFilter!, page: Int = 0, size: Int = 20): [OrderItem!]!
+  orders(page: Int = 0, size: Int = 20, statuses: [OrderStatus!]): [Order!]!
+  paymentOptions(cartCheckoutInfoInput: CartCheckoutInformationInput!): [PaymentOption!]!
+  products(page: Int = 0, size: Int = 24, sort: ProductSort!): ProductsPage!
+  user: Contacts!
+  search(input: SearchArgs!): [Product!]!
+  search_v2(input: SearchArgs!): SearchResult!
+  suggest(input: SuggestArgs!): SuggestResult
+
+  """Makes search."""
+  makeSearch(query: MakeSearchQueryInput!): MakeSearchResult!
+
+  """Get search suggestions."""
+  getSuggestions(query: GetSuggestionsInput!): GetSuggestionsResult!
+}
+
+"""Элемент блока 'Смотрите также'"""
+type RelatedElement {
+  """Заголовок элемента"""
+  title: String!
+
+  """Тип элемента: Категория, Бренд, Категория + Бренд"""
+  subtitle: String!
+
+  """Ссылка, куда ведет элемент"""
+  link: String!
+}
+
+"""Информация о доставке почтой"""
+type RuPostDelivery implements Delivery {
+  address: String!
+  originalDeliveryPrice: Int
+  price: Int!
+  ruPostBarcode: String!
+  ruPostId: Int!
+}
+
+"""Информация о расписании работы ПВЗ"""
+type Schedule {
+  """
+  Массив дней работы ПВЗ, всегда содержит 7 элементов пн-вс, даже если ПВЗ не работает в выходные
+  """
+  days: [ScheduleDay!]!
+}
+
+"""Информация о дне работы ПВЗ"""
+type ScheduleDay {
+  """Цвет текста"""
+  color: String!
+
+  """День недели пн-вс"""
+  day: DayOfWeek!
+
+  """Время начала работы ПВЗ, null - ПВЗ не работает в этот день"""
+  timeFrom: String
+
+  """Время окончания работы ПВЗ, null - ПВЗ не работает в этот день"""
+  timeTo: String
+}
+
+input SearchArgs {
+  query: String!
+  categoryId: Int
+  dshopCategoryId: Int
+  sort: SortOptions
+  paging: PagingOptions!
+  dedicatedShopId: Int
+  debug: Boolean
+  price: PricingOptions
+  dshopFilterCategories: [Int!]
+  offerID: Int
+}
+
+"""Searched earlier block."""
+type SearchedEarlierBlock {
+  """Order of this block."""
+  order: Int!
+}
+
+type SearchResult {
+  products: [Product!]!
+  totalProducts: Int!
+  prices: PriceAggregation!
+}
+
+"""Entry of the search result category tree."""
+type SearchResultCategoryTreeEntry {
+  """Category."""
+  category: Category!
+
+  """Total number of items found in the category."""
+  total: Int!
+}
+
+input SelectedDelivery {
+  city: String
+
+  """Id ПВЗ в Metaship"""
+  deliveryPointKey: String
+
+  """Id службы доставки"""
+  deliveryServiceCode: String
+
+  """
+  Может быть идентификатор: ПВЗ, постамата, слота курьерской доставки, почты россии
+  """
+  id: Int
+
+  """Тип выбранной доставки"""
+  type: DeliveryType!
+}
+
+"""Информация о продавце"""
+type SellerInfo {
+  """ID продавца"""
+  id: Int!
+
+  """ID аккаунта продавца"""
+  accountId: Int!
+
+  """Список юр. данных для отображения"""
+  legalRecords: [LegalRecord!]!
+}
+
+type SeoCategoryFields {
+  header: String
+  metaTag: String
+}
+
+"""Информация о магазине"""
+type Shop {
+  """ID магазина"""
+  id: Int!
+
+  """Название магазина"""
+  title: String!
+
+  """Короткое название магазина"""
+  shortTitle: String
+
+  """Аватарка магазина"""
+  avatar: PhotoLink
+
+  """Ссылка на магазин"""
+  url: String!
+
+  """Рейтинг магазина"""
+  rating: Float!
+
+  """Количество заказов магазина"""
+  ordersQuantity: Int!
+
+  """Количество отзывов магазина"""
+  feedbackQuantity: Int!
+
+  """Является ли магазин официальным"""
+  official: Boolean!
+
+  """Информация о продавце"""
+  seller: SellerInfo
+}
+
+"""Shop suggestions block."""
+type ShopSuggestionsBlock {
+  """List of category suggestions."""
+  shops: [Shop!]
+
+  """Order of this block."""
+  order: Int!
+}
+
+"""Adult content showing flag."""
+enum ShowAdultContent {
+  """
+  Means to return all content. Used for users who have not yet specified their age.
+  """
+  NONE
+
+  """Means to return content without adult products."""
+  FALSE
+
+  """Means to return all content."""
+  TRUE
+}
+
+type Sku {
+  """ID SKU"""
+  id: Int!
+
+  """SKU title, не используется на клиентах"""
+  skuTitle: String!
+
+  """Продукт, к которому относится SKU"""
+  product: Product!
+
+  """Стоимость SKU без скидки (зачеркнутая цена)"""
+  fullPrice: Int!
+
+  """Цена продажи СКУ"""
+  sellPrice: Int!
+
+  """Доступное количество по SKU"""
+  availableAmount: Int!
+
+  """Значения характеристик SKU"""
+  characteristicValues: [CharacteristicValue!]!
+
+  """Основная фотография для СКУ"""
+  photo: Photo!
+
+  """Массив фотографий для СКУ"""
+  photos: [Photo!]!
+
+  """Фотографии 360"""
+  photo360: [Photo!]
+
+  """Видео по SKU"""
+  video: Video
+
+  """Штрихкод СКУ"""
+  barcode: String!
+
+  """Размеры SKU"""
+  dimensions: SkuDimension!
+
+  """Вес SKU"""
+  weight: Int
+
+  """Свойства СКУ, в дизайне называются характеристиками"""
+  properties: [FilterValue!]
+
+  """Цветные баджи рядом с ценой"""
+  discountBadge: SkuDiscountBadge
+
+  """Плашки с таймером для конкретного СКУ"""
+  discountTimer: SkuDiscountTimer
+
+  """НДС SKU"""
+  vat: SkuVat
+
+  """Ску группа"""
+  skuGroup: SkuGroup
+}
+
+"""Размеры SKU"""
+type SkuDimension {
+  """Длина"""
+  length: Int
+
+  """Ширина"""
+  width: Int
+
+  """Высота"""
+  height: Int
+}
+
+type SkuDiscountBadge {
+  """ID баджа"""
+  id: Int!
+
+  """Текст баджа"""
+  text: String!
+
+  """hex цвет текста"""
+  textColor: String!
+
+  """hex цвет фона"""
+  backgroundColor: String!
+}
+
+"""Плашка с таймером для конкретного СКУ"""
+type SkuDiscountTimer {
+  """Текст для отображения таймера"""
+  text: String
+
+  """hex цвет текста"""
+  textColor: String!
+
+  """Дата окончания скидки"""
+  endDate: Timestamp!
+
+  """Иконка"""
+  image: PhotoLink!
+
+  """Цвет фона"""
+  backgroundColor: String
+}
+
+type SkuGroup {
+  """ID ску группы"""
+  id: Int!
+}
+
+"""Карточка СКУ группы"""
+type SkuGroupCard implements CatalogCard {
+  """ID СКУ группы (не продукта)"""
+  id: Int!
+
+  """ID продукта"""
+  productId: Int!
+
+  """Название товара"""
+  title: String!
+
+  """Количество заказов для СКУ группы"""
+  ordersQuantity: Int!
+
+  """Количество отзывов для СКУ группы"""
+  feedbackQuantity: Int!
+
+  """Рейтинг товара"""
+  rating: Float!
+
+  """Фотографии СКУ группы (приходит только главная пока)"""
+  photos: [Photo!]!
+
+  """Плашка со скидкой с таймером"""
+  offer: ProductOffer
+
+  """Массив бейджей товара"""
+  badges: [ProductBadge!]!
+
+  """
+  Цена для отображения в каталоге с учетом скидки (минимальная актуальная цена из всех SKU)
+  """
+  minSellPrice: Int!
+
+  """
+  Цена для отображения в каталоге до скидки (минимальная цена до скидки из всех SKU)
+  """
+  minFullPrice: Int!
+
+  """Добавлен ли товар в избранное"""
+  favorite: Boolean!
+
+  """Является ли товаром 18+"""
+  adult: Boolean!
+
+  """
+  Информация о проценте скидки (если цена до скидки больше цены со скидкой, придет процент скидки со знаком минус)
+  """
+  discountPercent: String
+
+  """Информация о магазине, который продает этот товар"""
+  shop: Shop
+
+  """Информация о наличии"""
+  inStock: Boolean!
+
+  """Значения характеристик для конкретной СКУ группы"""
+  characteristicValues: [CharacteristicValue!]!
+}
+
+"""НДС SKU"""
+type SkuVat {
+  """Тип НДС"""
+  type: ProductVat!
+
+  """Коэфициент НДС"""
+  vatRate: Int!
+
+  """Сумма НДС"""
+  vatAmount: Int!
+
+  """Цена без НДС"""
+  price: Int!
+}
+
+"""Search query result sorting."""
+enum Sort {
+  """Sort in descending order of stock-keeping unit group relevance."""
+  BY_RELEVANCE_DESC
+
+  """Sort in ascending order of stock-keeping unit group price."""
+  BY_PRICE_ASC
+
+  """Sort in descending order of stock-keeping unit group price."""
+  BY_PRICE_DESC
+
+  """Sort in ascending order of stock-keeping unit group rating."""
+  BY_RATING_ASC
+
+  """Sort in descending order of stock-keeping unit group rating."""
+  BY_RATING_DESC
+
+  """Sort in ascending order of product date added."""
+  BY_DATE_ADDED_ASC
+
+  """Sort in descending order of product date added."""
+  BY_DATE_ADDED_DESC
+
+  """Sort in ascending order of stock-keeping unit group orders number."""
+  BY_ORDERS_NUMBER_ASC
+
+  """Sort in descending order of stock-keeping unit group orders number."""
+  BY_ORDERS_NUMBER_DESC
+}
+
+enum SortBy {
+  price
+  rating
+  orders
+  date
+  default
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+enum SortingOrder {
+  ASCENDING
+  DESCENDING
+}
+
+input SortOptions {
+  by: SortBy
+  order: SortOrder
+}
+
+enum SortOrder {
+  ascending
+  descending
+}
+
+input SuggestArgs {
+  query: String!
+  size: Int
+  dedicatedShopID: Int
+}
+
+"""Suggestion block."""
+union SuggestionBlock = PopularSuggestionsBlock | TextSuggestionsBlock | CatalogCardSuggestionsBlock | CategorySuggestionsBlock | ShopSuggestionsBlock | SearchedEarlierBlock | LookedEarlierBlock
+
+type SuggestResult {
+  suggestions: [TextSuggestion!]
+}
+
+type TextSuggestion {
+  text: String!
+}
+
+"""Text suggestions block."""
+type TextSuggestionsBlock {
+  """List of text suggestions."""
+  values: [String!]
+
+  """Order of this block."""
+  order: Int!
+}
+
+scalar Time
+
+"""Timestamp value"""
+scalar Timestamp
+
+"""Не используется"""
+type TopTextBadge implements ProductBadge {
+  id: Int!
+  text: String!
+  textColor: String!
+  backgroundColor: String!
+}
+
+"""Параметр размера фотографии"""
+enum Transformation {
+  """
+  Четких размеров нет, если не ошибаюсь, то цифра - это ширина фотографии
+  """
+  PRODUCT_60
+  PRODUCT_80
+  PRODUCT_120
+  PRODUCT_240
+  PRODUCT_480
+  PRODUCT_540
+  PRODUCT_720
+  PRODUCT_800
+
+  """Оригинал фото"""
+  ORIGINAL
+
+  """240 3x4 не используется"""
+  PRODUCT_24034
+}
+
+"""Видео"""
+type Video {
+  """Ключ видео"""
+  key: String!
+
+  """Ссылка на видео"""
+  url: String!
+}
+
+type VolumeDiscount {
+  id: Int!
+}
+
+type WishSaleAction implements ProductAction {
+  """Дата окончания"""
+  dateEnd: Timestamp!
+  location: ProductActionLocation!
+
+  """Нажал ли пользователь кнопку 'Хочу скидку'"""
+  pressed: Boolean!
+
+  """Количество пользователей, которые нажали на кнопку 'Хочу скидку'"""
+  pressedCount: Int!
+  type: ProductActionType!
+}
