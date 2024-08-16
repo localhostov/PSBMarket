@@ -44,4 +44,8 @@ dependencies {
     implementation(libs.voyager.screenmodel)
     implementation(libs.voyager.transitions)
     implementation(libs.voyager.hilt)
+    implementation(libs.voyager.tabs)
+    implementation(libs.icons)
+    implementation(libs.graphql.runtime)
+    implementation(libs.hilt)
 }
