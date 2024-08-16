@@ -11,12 +11,18 @@ public object Theme {
         @Composable
         @ReadOnlyComposable
         get() = LocalColorScheme.current
+
+    public val shapes: BaseShapes
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalShapes.current
 }
 
 @Composable
 public fun AppTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(
-        LocalColorScheme provides defaultColorScheme
+        LocalColorScheme provides defaultColorScheme,
+        LocalShapes provides defaultShapes
     ) {
         ProvideTextStyle(
             value = TextStyle.Default.copy(color = Theme.colors.text),

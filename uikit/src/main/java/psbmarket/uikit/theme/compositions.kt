@@ -7,6 +7,10 @@ public val LocalColorScheme: ProvidableCompositionLocal<ColorScheme> = staticCom
     noLocalProvidedFor("LocalColorScheme")
 }
 
+public val LocalShapes: ProvidableCompositionLocal<BaseShapes> = staticCompositionLocalOf {
+    noLocalProvidedFor("LocalShapes")
+}
+
 private fun noLocalProvidedFor(name: String): Nothing {
     error("No default $name provided")
 }
