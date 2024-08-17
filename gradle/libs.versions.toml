@@ -14,12 +14,18 @@ icons = "1.1.0"
 graphql = "4.0.0"
 dagger = "2.49"
 ksp = "2.0.0-1.0.21"
+javapoet = "1.13.0"
+sonner = "0.3.8"
+datastore = "1.1.1"
+splash = "1.0.1"
 
 [libraries]
 plugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
+javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 graphql-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "graphql" }
 
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
@@ -42,8 +48,11 @@ hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.re
 
 icons = { module = "lol.hostov.icons:rounded", version.ref = "icons" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
 
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-splash = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
 
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

@@ -24,6 +24,9 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.graphql.runtime)
     implementation(libs.hilt)
+    api(libs.sonner)
+    implementation(libs.androidx.datastore)
+    implementation(libs.lifecycle.runtime.compose)
 
     ksp(libs.hilt.compiler)
 }

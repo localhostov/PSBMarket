@@ -4,6 +4,8 @@ plugins {
     android
     `kotlin-android`
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
     id(libs.plugins.android.application.get().pluginId)
 }
 
@@ -48,4 +50,9 @@ dependencies {
     implementation(libs.icons)
     implementation(libs.graphql.runtime)
     implementation(libs.hilt)
+    implementation(libs.sonner)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.splash)
+
+    ksp(libs.hilt.compiler)
 }
