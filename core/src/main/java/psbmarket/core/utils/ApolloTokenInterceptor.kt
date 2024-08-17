@@ -21,7 +21,7 @@ internal class ApolloTokenInterceptor(
         request: ApolloRequest<D>,
         chain: ApolloInterceptorChain
     ): Flow<ApolloResponse<D>> = flow {
-        val accessToken = context.dataStore.data.first()[Preferences.accessToken] ?: Constants.BASIC_API_TOKEN
+        val accessToken = context.dataStore.data.first()[Preferences.accessToken]?.takeIf { it.isNotEmpty() } ?: Constants.BASIC_API_TOKEN
         val modifiedRequest = request
             .newBuilder()
             .addHttpHeader("Authorization", accessToken)
