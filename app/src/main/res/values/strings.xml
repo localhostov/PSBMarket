@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">PSB Market</string>
+    <string name="app_name">ПСБ Маркет</string>
+
+    <string name="app.someError">Произошла какая-то ошибка</string>
+
+    <string name="screen.profile.edit">Редактировать</string>
+    <string name="screen.profile.exit">Выйти из аккаунта</string>
+
+    <string name="screen.signIn.title">Вход в аккаунт</string>
+    <string name="screen.signIn.resetPassword">Восстановить пароль</string>
+    <string name="screen.signIn.signInAction">Войти в аккаунт</string>
+    <string name="screen.signIn.numberFieldPlaceholder">Номер телефона</string>
+    <string name="screen.signIn.passwordFieldPlaceholder">Пароль</string>
 </resources>
