@@ -1,0 +1,17 @@
+mutation SignIn($password: String!, $username: String!) {
+    signIn(password: $password, username: $username) {
+        accessToken
+        customer {
+            contacts {
+                email
+                firstName
+                lastName
+                patronymic
+                phone
+                sex
+            }
+            id
+            phoneVerified
+        }
+    }
+}

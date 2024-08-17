@@ -1,0 +1,27 @@
+query GetUserData {
+    user {
+        email
+        firstName
+        lastName
+        patronymic
+        phone
+        sex
+    }
+}
+
+query GetFavorites($filter: FavoritesFilter) {
+    skuGroupFavorites(filter: $filter) {
+        title
+        adult
+        discountPercent
+        favorite
+        feedbackQuantity
+        id
+        inStock
+        minFullPrice
+        minSellPrice
+        ordersQuantity
+        productId
+        rating
+    }
+}
