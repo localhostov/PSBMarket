@@ -12,10 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.util.fastForEach
+import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import me.localx.icons.rounded.Icons
@@ -29,11 +36,16 @@ import me.localx.icons.rounded.outline.CartShoppingFast
 import me.localx.icons.rounded.outline.Heart
 import me.localx.icons.rounded.outline.Home
 import me.localx.icons.rounded.outline.User
+import me.localx.psbmarket.ui.screens.signIn.SignInScreen
 import me.localx.psbmarket.ui.tabs.CartTab
 import me.localx.psbmarket.ui.tabs.FavoritesTab
 import me.localx.psbmarket.ui.tabs.HomeTab
 import me.localx.psbmarket.ui.tabs.OverviewTab
 import me.localx.psbmarket.ui.tabs.ProfileTab
+import psbmarket.core.Preferences
+import psbmarket.core.data.event.AppEvent
+import psbmarket.core.data.event.LocalAppEventBus
+import psbmarket.core.extensions.dataStore
 import psbmarket.uikit.components.bottomBar.BottomBar
 import psbmarket.uikit.components.bottomBar.BottomBarTabItem
 import psbmarket.uikit.components.bottomBar.Tab
@@ -42,6 +54,22 @@ import psbmarket.uikit.theme.Theme
 class MainScreen : Screen {
     @Composable
     override fun Content() {
+        val context = LocalContext.current
+        val navigator = LocalNavigator.currentOrThrow
+        val appEventBus = LocalAppEventBus.current
+        val lifecycleOwner  = LocalLifecycleOwner.current
+
+        LaunchedEffect(Unit) {
+            appEventBus.subscribe(lifecycleOwner.lifecycleScope) { event ->
+                if (event is AppEvent.Logout) {
+                    navigator.replaceAll(SignInScreen())
+                    context.dataStore.edit { prefs ->
+                        prefs[Preferences.accessToken] = ""
+                    }
+                }
+            }
+        }
+
         TabNavigator(
             tab = HomeTab,
             tabDisposable = {

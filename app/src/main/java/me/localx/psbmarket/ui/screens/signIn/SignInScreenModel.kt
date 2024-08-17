@@ -53,7 +53,7 @@ class SignInScreenModel @Inject constructor(
             val response = apolloClient.mutation(
                 SignInMutation(
                     password = password,
-                    username = "+7$phoneNumber" // из-за использования маски phoneNumber будет без +7
+                    username = phoneNumber
                 )
             ).execute()
 
@@ -75,7 +75,7 @@ class SignInScreenModel @Inject constructor(
                         it[Preferences.accessToken] = "Bearer ${data.signIn.accessToken}"
                     }
 
-                    navigator.push(MainScreen())
+                    navigator.replaceAll(MainScreen())
                 } catch (e: NoDataException) {
                     appEventBus.emit(AppEvent.ShowToast(
                         Toast(

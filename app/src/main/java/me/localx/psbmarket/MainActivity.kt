@@ -66,10 +66,8 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(Unit) {
                 appEventBus.subscribe(lifecycleScope) { event ->
-                    when (event) {
-                        is AppEvent.ShowToast -> {
-                            toaster.show(event.toast)
-                        }
+                    if (event is AppEvent.ShowToast) {
+                        toaster.show(event.toast)
                     }
                 }
             }
