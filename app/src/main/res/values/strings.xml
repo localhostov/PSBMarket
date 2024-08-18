@@ -5,10 +5,26 @@
 
     <string name="screen.profile.edit">Редактировать</string>
     <string name="screen.profile.exit">Выйти из аккаунта</string>
+    <string name="screen.profile.logoutAlertTitle">Выйти из аккаунта</string>
+    <string name="screen.profile.logoutAlertCaption">Вы уверены, что хотите выйти из аккаунта?</string>
+    <string name="screen.profile.logoutAlertNegative">Выйти</string>
+    <string name="screen.profile.logoutAlertPositive">Остаться</string>
 
     <string name="screen.signIn.title">Вход в аккаунт</string>
     <string name="screen.signIn.resetPassword">Восстановить пароль</string>
     <string name="screen.signIn.signInAction">Войти в аккаунт</string>
     <string name="screen.signIn.numberFieldPlaceholder">Номер телефона</string>
     <string name="screen.signIn.passwordFieldPlaceholder">Пароль</string>
+
+    <string name="screen.favorite.title">Избранное</string>
+    <string name="screen.favorite.addToCard">В корзину</string>
+    <string name="screen.favorite.emptyFeedback">Оценок нет</string>
+    <string-array name="screen.favorite.rating">
+        <item>оценка</item>
+        <item>оценки</item>
+        <item>оценок</item>
+    </string-array>
+    <string name="screen.favorite.filterAscendingPrice">Сначала дешевле</string>
+    <string name="screen.favorite.filterDescendingPrice">Сначала дороже</string>
+    <string name="screen.favorite.filterDescendingDate">Недавно добавленные</string>
 </resources>

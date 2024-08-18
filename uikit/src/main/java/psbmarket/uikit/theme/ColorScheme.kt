@@ -8,6 +8,8 @@ public data class ColorScheme(
 
     val success: Color,
     val error: Color,
+    val discount: Color,
+    val price: Color,
 
     val text: Color,
     val textSecondary: Color,
@@ -32,6 +34,12 @@ public data class ColorScheme(
 
     val toasterBackground: Color,
     val toasterBorder: Color,
+
+    val alertBackground: Color,
+    val alertPositiveButton: Color,
+    val alertNegativeButton: Color,
+
+    val balloonBackground: Color,
 )
 
 public val defaultColorScheme: ColorScheme = ColorScheme(
@@ -40,6 +48,8 @@ public val defaultColorScheme: ColorScheme = ColorScheme(
 
     success = Color(0xFF41AC0F),
     error = Color(0xFFAC0F0F),
+    discount = Color(0xffdc3c3c),
+    price = Color(0xff5b5cdc),
 
     text = Color(0xFFFFFFFF),
     textSecondary = Color(0xFF606060),
@@ -63,5 +73,11 @@ public val defaultColorScheme: ColorScheme = ColorScheme(
     inputPlaceholder = Color(0xFF5C5C5C),
 
     toasterBackground = Color(0xFF262626),
-    toasterBorder = Color(0xFF333333)
+    toasterBorder = Color(0xFF333333),
+
+    alertBackground = Color(0xFF1F1F1F),
+    alertPositiveButton = Color(0xFF4572E5),
+    alertNegativeButton = Color(0xFFE54545),
+
+    balloonBackground = Color(0xFF171717)
 )
