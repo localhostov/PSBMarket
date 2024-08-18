@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -25,6 +26,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import kotlinx.coroutines.launch
 import me.localx.icons.rounded.Icons
 import me.localx.icons.rounded.filled.Apps
 import me.localx.icons.rounded.filled.CartShoppingFast
@@ -58,13 +60,16 @@ class MainScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val appEventBus = LocalAppEventBus.current
         val lifecycleOwner  = LocalLifecycleOwner.current
+        val scope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
             appEventBus.subscribe(lifecycleOwner.lifecycleScope) { event ->
                 if (event is AppEvent.Logout) {
                     navigator.replaceAll(SignInScreen())
-                    context.dataStore.edit { prefs ->
-                        prefs[Preferences.accessToken] = ""
+                    scope.launch {
+                        context.dataStore.edit { prefs ->
+                            prefs[Preferences.accessToken] = ""
+                        }
                     }
                 }
             }
