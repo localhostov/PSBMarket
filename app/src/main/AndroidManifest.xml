@@ -20,8 +20,10 @@
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
-            android:theme="@style/Theme.PSBMarket">
+            android:theme="@style/Theme.PSBMarket"
+            tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
