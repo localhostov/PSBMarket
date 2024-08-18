@@ -23,5 +23,10 @@ query GetFavorites($filter: FavoritesFilter) {
         ordersQuantity
         productId
         rating
+        photos {
+            original {
+                low
+            }
+        }
     }
 }
