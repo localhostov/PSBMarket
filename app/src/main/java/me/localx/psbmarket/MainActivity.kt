@@ -6,6 +6,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
@@ -24,10 +25,12 @@ import kotlinx.coroutines.runBlocking
 import me.localx.psbmarket.ui.screens.main.MainScreen
 import me.localx.psbmarket.ui.screens.signIn.SignInScreen
 import psbmarket.core.Preferences
+import psbmarket.core.composables.rememberPreference
 import psbmarket.core.data.event.AppEvent
 import psbmarket.core.data.event.AppEventBus
 import psbmarket.core.data.event.LocalAppEventBus
 import psbmarket.core.extensions.dataStore
+import psbmarket.uikit.components.bottomBar.BOTTOM_BAR_HEIGHT
 import psbmarket.uikit.theme.AppTheme
 import psbmarket.uikit.theme.Theme
 import javax.inject.Inject
@@ -75,6 +78,8 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalAppEventBus provides appEventBus
             ) {
+                val isLoggedIn = rememberPreference(key = Preferences.accessToken, defValue = "").value.isNotEmpty()
+
                 AppTheme {
                     Toaster(
                         state = toaster,
@@ -83,7 +88,8 @@ class MainActivity : ComponentActivity() {
                         shadowSpotColor = Color.Transparent,
                         border = { BorderStroke(1.dp, Theme.colors.toasterBorder) },
                         shape = { Theme.shapes.medium },
-                        contentColor = { Theme.colors.text }
+                        contentColor = { Theme.colors.text },
+                        containerPadding = PaddingValues(bottom = if (isLoggedIn) BOTTOM_BAR_HEIGHT else 0.dp),
                     )
 
                     Navigator(initialScreen) { navigator ->
