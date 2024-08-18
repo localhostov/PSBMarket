@@ -20,4 +20,5 @@ dependencies {
 
     implementation(libs.material3)
     implementation(libs.voyager.tabs)
+    api(libs.icons)
 }

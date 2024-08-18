@@ -27,6 +27,8 @@ dependencies {
     api(libs.sonner)
     implementation(libs.androidx.datastore)
     implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
 
     ksp(libs.hilt.compiler)
 }

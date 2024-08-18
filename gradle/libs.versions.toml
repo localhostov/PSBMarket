@@ -18,6 +18,9 @@ javapoet = "1.13.0"
 sonner = "0.3.8"
 datastore = "1.1.1"
 splash = "1.0.1"
+coil = "2.6.0"
+paging = "3.3.2"
+balloon = "1.6.6"
 
 [libraries]
 plugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -37,6 +40,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-runtime = { module = "androidx.compose.runtime:runtime-android", version.ref = "composeLib" }
 compose-foundation = { module = "androidx.compose.foundation:foundation-android", version.ref = "composeLib" }
 
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
@@ -45,10 +49,13 @@ voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voy
 voyager-tabs = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 icons = { module = "lol.hostov.icons:rounded", version.ref = "icons" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 sonner = { module = "io.github.dokar3:sonner", version.ref = "sonner" }
+balloon = { module = "com.github.skydoves:balloon-compose", version.ref = "balloon" }
 
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }

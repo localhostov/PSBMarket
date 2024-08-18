@@ -53,6 +53,10 @@ dependencies {
     implementation(libs.sonner)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.splash)
+    implementation(libs.coil)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
+    implementation(libs.balloon)
 
     ksp(libs.hilt.compiler)
 }
