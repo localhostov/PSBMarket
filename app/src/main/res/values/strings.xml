@@ -27,4 +27,8 @@
     <string name="screen.favorite.filterAscendingPrice">Сначала дешевле</string>
     <string name="screen.favorite.filterDescendingPrice">Сначала дороже</string>
     <string name="screen.favorite.filterDescendingDate">Недавно добавленные</string>
+
+    <string name="screen.home.mostPopularCategories">Популярные категории</string>
+    <string name="screen.home.all">Все</string>
+    <string name="screen.home.search">Поиск</string>
 </resources>

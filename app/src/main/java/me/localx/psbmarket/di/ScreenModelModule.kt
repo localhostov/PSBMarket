@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
 import me.localx.psbmarket.ui.screens.favorite.FavoriteScreenModel
+import me.localx.psbmarket.ui.screens.home.HomeScreenModel
 import me.localx.psbmarket.ui.screens.profile.ProfileScreenModel
 import me.localx.psbmarket.ui.screens.signIn.SignInScreenModel
 
@@ -28,4 +29,9 @@ abstract class ScreenModelModule {
     @IntoMap
     @ScreenModelKey(FavoriteScreenModel::class)
     abstract fun bindFavoriteScreenModel(screenModel: FavoriteScreenModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(HomeScreenModel::class)
+    abstract fun bindHomeScreenModel(screenModel: HomeScreenModel): ScreenModel
 }

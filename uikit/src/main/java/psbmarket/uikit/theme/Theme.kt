@@ -1,5 +1,6 @@
 package psbmarket.uikit.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
@@ -35,13 +36,15 @@ public val defaultTextFieldColors: TextFieldColors
 
 @Composable
 public fun AppTheme(content: @Composable () -> Unit) {
-    CompositionLocalProvider(
-        LocalColorScheme provides defaultColorScheme,
-        LocalShapes provides defaultShapes
-    ) {
-        ProvideTextStyle(
-            value = TextStyle.Default.copy(color = Theme.colors.text),
-            content = content
-        )
+    MaterialTheme {
+        CompositionLocalProvider(
+            LocalColorScheme provides defaultColorScheme,
+            LocalShapes provides defaultShapes
+        ) {
+            ProvideTextStyle(
+                value = TextStyle.Default.copy(color = Theme.colors.text),
+                content = content
+            )
+        }
     }
 }
