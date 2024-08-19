@@ -35,8 +35,9 @@ import com.skydoves.balloon.compose.rememberBalloonBuilder
 import me.localx.icons.rounded.Icons
 import me.localx.icons.rounded.outline.SettingsSliders
 import me.localx.psbmarket.R
-import me.localx.psbmarket.ui.screens.favorite.views.FavoriteCardView
 import me.localx.psbmarket.ui.screens.favorite.views.FilterBalloonView
+import me.localx.psbmarket.ui.views.ProductCardData
+import me.localx.psbmarket.ui.views.ProductCardView
 import psbmarket.uikit.components.toolbar.Toolbar
 import psbmarket.uikit.components.toolbar.rememberToolbarScrollBehavior
 import psbmarket.uikit.theme.Theme
@@ -106,7 +107,17 @@ class FavoriteScreen : Screen {
 
                     if (item != null) {
                         key(item.id) {
-                            FavoriteCardView(item)
+                            ProductCardView(
+                                ProductCardData(
+                                    minSellPrice = item.minSellPrice,
+                                    minFullPrice = item.minFullPrice,
+                                    discountPercent = item.discountPercent,
+                                    title = item.title,
+                                    feedbackQuantity = item.feedbackQuantity,
+                                    rating = item.rating,
+                                    image = item.photos[0].original.low
+                                )
+                            )
                         }
                     }
                 }
