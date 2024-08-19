@@ -30,3 +30,53 @@ query GetFavorites($filter: FavoritesFilter) {
         }
     }
 }
+
+query GetMainPageBanners {
+    dshopMain(type: MOBILE) {
+        banners {
+            image {
+                low
+            }
+            link
+        }
+    }
+}
+
+query GetMainPageOffers {
+    dshopMain(type: MOBILE) {
+        offers {
+            id
+            title
+            productsPage(page: 0, size: 8) {
+                content {
+                    title
+                    adult
+                    skuGroups {
+                        discountPercent
+                    }
+                    favorite
+                    feedbackQuantity
+                    id
+                    inStock
+                    minFullPrice
+                    minSellPrice
+                    ordersQuantity
+                    rating
+                    photos {
+                        original {
+                            low
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+query GetMainPageCategories {
+    dshopMain(type: MOBILE) {
+        categories {
+            title
+        }
+    }
+}
