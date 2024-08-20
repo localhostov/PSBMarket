@@ -108,14 +108,17 @@ class FavoriteScreen : Screen {
                     if (item != null) {
                         key(item.id) {
                             ProductCardView(
-                                ProductCardData(
+                                onChangeFavorite = {},
+                                onAddToCart = {},
+                                item = ProductCardData(
                                     minSellPrice = item.minSellPrice,
                                     minFullPrice = item.minFullPrice,
                                     discountPercent = item.discountPercent,
                                     title = item.title,
                                     feedbackQuantity = item.feedbackQuantity,
                                     rating = item.rating,
-                                    image = item.photos[0].original.low
+                                    image = item.photos[0].original.low,
+                                    favorite = item.favorite
                                 )
                             )
                         }

@@ -60,7 +60,7 @@ fun BannersView(screenModel: HomeScreenModel) {
             flingBehavior = bannersFlingBehavior,
         ) {
             if (banners != null) {
-                items(banners!!) { item ->
+                items(banners!!, key = { it.id }) { item ->
                     AsyncImage(
                         model = item.image.low,
                         contentDescription = null,
