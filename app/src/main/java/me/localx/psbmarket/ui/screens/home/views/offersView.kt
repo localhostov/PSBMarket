@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,14 +39,7 @@ fun LazyListScope.offersView(offers: List<GetMainPageOffersQuery.Offer>?) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            onClick = {},
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(color = Theme.colors.text)
-                        )
-                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                    modifier = Modifier.headerModifier
                 ) {
                     Text(
                         text = offer.title,
@@ -58,11 +52,7 @@ fun LazyListScope.offersView(offers: List<GetMainPageOffersQuery.Offer>?) {
 
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .height(36.dp)
-                            .clip(CircleShape)
-                            .background(Theme.colors.card)
-                            .padding(horizontal = 16.dp)
+                        modifier = Modifier.allButton
                     ) {
                         Text(
                             text = stringResource(R.string.screen_home_all),
@@ -98,3 +88,22 @@ fun LazyListScope.offersView(offers: List<GetMainPageOffersQuery.Offer>?) {
         }
     }
 }
+
+private val Modifier.headerModifier
+    @Composable
+    get() = this
+        .fillMaxWidth()
+        .clickable(
+            onClick = {},
+            interactionSource = remember { MutableInteractionSource() },
+            indication = rememberRipple(color = Theme.colors.text)
+        )
+        .padding(vertical = 8.dp, horizontal = 16.dp)
+
+private val Modifier.allButton
+    @Composable
+    get() = this
+        .height(36.dp)
+        .clip(CircleShape)
+        .background(Theme.colors.card)
+        .padding(horizontal = 16.dp)
