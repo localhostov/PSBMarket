@@ -34,6 +34,7 @@ query GetFavorites($filter: FavoritesFilter) {
 query GetMainPageBanners {
     dshopMain(type: MOBILE) {
         banners {
+            id
             image {
                 low
             }
@@ -77,6 +78,27 @@ query GetMainPageCategories {
     dshopMain(type: MOBILE) {
         categories {
             title
+        }
+    }
+}
+
+query GetCategories {
+    dshopMain(type: MOBILE) {
+        categories {
+            id
+            title
+            children {
+                id
+                title
+                children {
+                    id
+                    title
+                    children {
+                        id
+                        title
+                    }
+                }
+            }
         }
     }
 }
