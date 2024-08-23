@@ -9,6 +9,7 @@ import dagger.hilt.android.components.ActivityComponent
 import dagger.multibindings.IntoMap
 import me.localx.psbmarket.ui.screens.favorite.FavoriteScreenModel
 import me.localx.psbmarket.ui.screens.home.HomeScreenModel
+import me.localx.psbmarket.ui.screens.overview.OverviewScreenModel
 import me.localx.psbmarket.ui.screens.profile.ProfileScreenModel
 import me.localx.psbmarket.ui.screens.signIn.SignInScreenModel
 
@@ -34,4 +35,9 @@ abstract class ScreenModelModule {
     @IntoMap
     @ScreenModelKey(HomeScreenModel::class)
     abstract fun bindHomeScreenModel(screenModel: HomeScreenModel): ScreenModel
+
+    @Binds
+    @IntoMap
+    @ScreenModelKey(OverviewScreenModel::class)
+    abstract fun bindOverviewScreenModel(screenModel: OverviewScreenModel): ScreenModel
 }
